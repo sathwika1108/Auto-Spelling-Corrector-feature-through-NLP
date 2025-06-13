@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spell Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spell Checker</h1>
+        <input type="text" id="wordInput" placeholder="Enter a word to check...">
+        <button onclick="checkSpelling()">Check</button>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        async function checkSpelling() {
+            const word = document.getElementById('wordInput').value;
+            const response = await fetch('/spellcheck', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ word })
+            });
+            const data = await response.json();
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'result';
+                div.innerText = `Suggestion ${index + 1}: ${item[0]} (Probability: ${item[1].toFixed(6)})`;
+                results.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
